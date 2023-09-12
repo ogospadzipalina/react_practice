@@ -33,6 +33,10 @@ export const App = () => {
     setSelectedCategory(categoryId);
   };
 
+  const handleSearch = (value) => {
+    setSearchValue(value);
+  };
+
   const resetFilters = () => {
     setSelectedUser(null);
     setSelectedCategory(null);
@@ -42,7 +46,9 @@ export const App = () => {
   const filteredProducts = products.filter((product) => {
     const matchesUser = !selectedUser || product.owner.id === selectedUser;
     const matchesCategory = !selectedCategory
-      || product.categoryId === selectedCategory;
+    || (product.category.includes(selectedCategory)
+    || (selectedCategory === 'All Categories'
+    && product.category !== 'Unknown Category'));
     const matchesSearch = !searchValue
       || product.name.toLowerCase().includes(searchValue.toLowerCase());
 
@@ -88,20 +94,21 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={searchValue}
+                  onChange={el => handleSearch(el.target.value)}
                 />
-
                 <span className="icon is-left">
                   <i className="fas fa-search" aria-hidden="true" />
                 </span>
-
                 <span className="icon is-right">
-                  {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {searchValue !== '' && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={() => handleSearch('')}
+                    />
+                  )}
                 </span>
               </p>
             </div>
@@ -137,6 +144,7 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={resetFilters}
               >
                 Reset all filters
               </a>
