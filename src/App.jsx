@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/accessible-emoji */
+
 import React, { useState } from 'react';
 import './App.scss';
 
@@ -15,7 +15,7 @@ const products = productsFromServer.map((product) => {
   return {
     id: product.id,
     name: product.name,
-    category: `${category.icon} - ${category.title}`,
+    category,
     owner: user,
   };
 });
@@ -31,8 +31,6 @@ export const App = () => {
 
   const handleCategoryFilter = (categoryId) => {
     setSelectedCategory(categoryId);
-    // eslint-disable-next-line no-console
-    console.log(categoryId, selectedCategory);
   };
 
   const handleSearch = (value) => {
@@ -130,7 +128,7 @@ export const App = () => {
                   data-cy={`Category-${category.id}`}
                   className={selectedCategory === category.id
                     ? 'button mr-2 my-1 is-info is-active'
-                    : 'button mr-2 my-1 is-info'}
+                    : 'button mr-2 my-1'}
                   href="#/"
                   onClick={() => handleCategoryFilter(category.id)}
                 >
@@ -222,7 +220,7 @@ export const App = () => {
                     </td>
                     <td data-cy="ProductName">{product.name}</td>
                     <td data-cy="ProductCategory">
-                      {product.category}
+                      <p>{`${product.category.icon} - ${product.category.title}`}</p>
                     </td>
                     <td
                       data-cy="ProductUser"
