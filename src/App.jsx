@@ -22,7 +22,7 @@ const products = productsFromServer.map((product) => {
 
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchValue, setSearchValue] = useState('');
 
   const handleUserFilter = (userId) => {
@@ -30,7 +30,11 @@ export const App = () => {
   };
 
   const handleCategoryFilter = (categoryId) => {
-    setSelectedCategory(categoryId);
+    if (selectedCategories.includes(categoryId)) {
+      setSelectedCategories(selectedCategories.filter(id => id !== categoryId));
+    } else {
+      setSelectedCategories([...selectedCategories, categoryId]);
+    }
   };
 
   const handleSearch = (value) => {
@@ -39,14 +43,14 @@ export const App = () => {
 
   const resetFilters = () => {
     setSelectedUser(null);
-    setSelectedCategory(null);
+    setSelectedCategories(null);
     setSearchValue('');
   };
 
   const filteredProducts = products.filter((product) => {
     const matchesUser = !selectedUser || product.owner.id === selectedUser;
-    const matchesCategory = !selectedCategory
-    || product.category.id === selectedCategory;
+    const matchesCategory = selectedCategories.length === 0
+    || selectedCategories.includes(product.category.id);
     const matchesSearch = !searchValue
       || product.name.toLowerCase().includes(searchValue.toLowerCase());
 
@@ -115,25 +119,28 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className={!selectedCategory
-                  ? 'is-active button is-success mr-6 is-outlined'
-                  : 'button is-success mr-6 is-outlined'}
-                onClick={() => handleCategoryFilter(null)}
+                className={!selectedCategories.length
+                  ? 'checkbox'
+                  : 'checkbox'}
+                onClick={() => setSelectedCategories([])}
               >
                 All Categories
               </a>
               {categoriesFromServer.map(category => (
-                <a
+                <label
                   key={category.id}
-                  data-cy={`Category-${category.id}`}
-                  className={selectedCategory === category.id
-                    ? 'button mr-2 my-1 is-info is-active'
-                    : 'button mr-2 my-1'}
-                  href="#/"
-                  onClick={() => handleCategoryFilter(category.id)}
+                  className={!selectedCategories.includes(category.id)
+                    ? 'button mr-2 my-1 is-active'
+                    : 'button mr-2 my-1 is-info'}
                 >
+                  <input
+                    type="checkbox"
+                    data-cy={`Category-${category.id}`}
+                    checked={selectedCategories.includes(category.id)}
+                    onChange={() => handleCategoryFilter(category.id)}
+                  />
                   {category.title}
-                </a>
+                </label>
               ))}
             </div>
 
