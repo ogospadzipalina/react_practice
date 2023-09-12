@@ -15,8 +15,8 @@ const products = productsFromServer.map((product) => {
   return {
     id: product.id,
     name: product.name,
-    category: category ? `${category.icon} - ${category.title}` : 'Unknown Category',
-    owner: user || { name: 'Unknown User', gender: 'unknown' },
+    category: `${category.icon} - ${category.title}`,
+    owner: user,
   };
 });
 
